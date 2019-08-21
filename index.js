@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require('apollo-server');
+const { ApolloServer, gql } = require("apollo-server");
 
 // This is a (sample) collection of books we'll be able to query
 // the GraphQL server for.  A more complete example might fetch
@@ -6,27 +6,27 @@ const { ApolloServer, gql } = require('apollo-server');
 const books = [
   {
     id: 1,
-    title: 'Harry Potter and the Chamber of Secrets',
-    authorId: 2,
+    title: "Harry Potter and the Chamber of Secrets",
+    authorId: 2
   },
   {
     id: 2,
-    title: 'Jurassic Park',
-    authorId: 1,
-  },
+    title: "Jurassic Park",
+    authorId: 1
+  }
 ];
 
 const authors = [
   {
     id: 1,
-    name: 'Michael Crichton'
+    name: "Michael Crichton"
   },
   {
     id: 2,
-    name: 'J.K. Rowling',
+    name: "J.K. Rowling",
     age: 53
   }
-]
+];
 
 // Type definitions define the "shape" of your data and specify
 // which ways the data can be fetched from the GraphQL server.
@@ -35,33 +35,51 @@ const typeDefs = gql`
 
   # Triple quotes in a schema denote a docstring that will appear in the
   # playground alongside the schema. Markdown is fully supported!
-  
+
   """
   Books are essential to learning and human culture.
   They have existed for _thousands_ of years in one form or another.
   More information can be found on [Wikipedia](https://en.wikipedia.org/wiki/Book#Etymology).
   """
   type Book {
+    """
+    The ID is a unique, randomly generated number.
+
+    **NOTE:** Future versions of the API may use a 16-char UUID
+    """
     id: ID!
     """
-    The often-times misleading name of the book
+    The ( often-times misleading ) name of the book.
+
+    Don't judge a book my its over or its title for that matter.
     """
     title: String
     """
-    The human being who wrote the book
+    The human being who wrote the book, see more on [Wikipedia](https://en.wikipedia.org/wiki/Author)
     """
     author: Person
   }
 
   type Person {
     id: ID!
+    """
+    The full name of the human. Often times humans have between **1 and 5** names separated with spaces.
+
+    **Examples:** \`Michael Crichton\`, \`J.K. Rowling\`, \`Daniel Oswaldo de Jesus Gomez Hernandez\`
+    """
     name: String!
+    """
+    Number of years since the human was born, often rounded down to the nearest whole number.
+    """
     age: Int
   }
 
   # The "Query" type is the root of all GraphQL queries.
   # (A "Mutation" type will be covered later on.)
   type Query {
+    """
+    List of all books in the library.
+    """
     books: [Book]
   }
 `;
@@ -70,13 +88,13 @@ const typeDefs = gql`
 // schema.  We'll retrieve books from the "books" array above.
 const resolvers = {
   Query: {
-    books: () => books,
+    books: () => books
   },
-  
+
   Book: {
     // Parent in GraphQL means "thing that called this"
     // so the author field is nested in "Book", making it the parent
-    author: (parent) => {
+    author: parent => {
       return authors.find(author => author.id === parent.authorId);
     }
   }
